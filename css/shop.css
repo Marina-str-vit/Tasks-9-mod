@@ -45,3 +45,25 @@
   margin-top: 15px;
   color: #007bff;
 }
+
+.product-add-btn {
+  display: block;
+  cursor: pointer;
+  text-align: center;
+  background: #4d5ae5;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.15);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 150%;
+  letter-spacing: 0.04em;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  padding: 16px 32px;
+  min-width: 169px;
+  margin: 0 auto;
+  margin-top: 15px;
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}

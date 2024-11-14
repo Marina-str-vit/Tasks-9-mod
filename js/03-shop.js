@@ -51,15 +51,17 @@ const instruments = [
 ]
 
 
-const container = document.querySelector(".js-list");
-const PRODUCT_LS = "basket";
+const container = document.querySelector(".js-list"); //це  тег ul 
+const PRODUCT_LS = "basket";    // ключ під яким у локал.сховище будемо зберігати те, що вибрав покупець
 
-container.insertAdjacentHTML("beforeend", createMarkup(instruments));
-container.addEventListener("click", handleAdd);
+container.insertAdjacentHTML("beforeend", createMarkup(instruments)); // підв'язали створену функцію з об'єктом де будуть відображатися усі товари
 
+container.addEventListener("click", handleAdd); //делегую подію, буду розуміти по чому клікнули і з цього буду щось робити
+
+// функю для стіорення массива
 function createMarkup(arr) {
-  return arr
-      .map(({ id, img, name, price, description }) => `
+  return arr    //використали деструктуризацію
+      .map(({ id, img, name, price, description }) => ` 
           <li data-id="${id}" class="product-card js-product">
               <img src="${img}" alt="${name}" class="product-img"/>
               <h2 class="product-title">${name}</h2>
@@ -67,28 +69,32 @@ function createMarkup(arr) {
               <p class="product-price">${price} грн</p>
               <button class="product-add-btn js-add">Add to basket</button>
           </li>
-      `).join("");
+      `).join(""); // join("") для того, щоб все привести до рядка  
 }
 
-
+//можна не робити ситуацію з перевіркою, чи правильно клікнули чи ні, 
+// а одразу писати:!! event.target.classList.contains("js-add") !! і далі одразу інші умови для кліка
 function handleAdd(event) {
   if(!event.target.classList.contains("js-add")) {
       return;
   }
-
+// отримання з батьківського елемента <li>
   const product = event.target.closest(".js-product");
-  const productId = Number(product.dataset.id);
-  const currentProduct = instruments.find(({ id }) => id === productId);
+  const productId = +product.dataset.id; // отримання id продукту що буде вибирати клієнт
+  const currentProduct = instruments.find(({ id }) => id === productId); // використовую метод масиивів !!  find() !! порівнюю і записую у новий масив
   
-  const products = JSON.parse(localStorage.getItem(PRODUCT_LS)) ?? [];
-  const index = products.findIndex(({ id }) => id === productId);
+  const products = JSON.parse(localStorage.getItem(PRODUCT_LS)) ?? []; // отримую данні, що саме обрав клієнт
+
+            
+  const index = products.findIndex(({ id }) => id === productId); // шукаю індекс елемента, чи він є, якщо ні то буде -1
   
   if(index !== -1) {
-      products[index].qty += 1;
+    // створюю нову властивість !! .qty !!, щоб можна було зберігати декілька одинакових об'єктів
+      products[index].qty += 1; // products[index] == тут знаходиться продукт, що отримали після кліку клієнта на нього
   } else {
-      currentProduct.qty = 1;
+      currentProduct.qty = 1; // в новий масив додаю нову властивість
       products.push(currentProduct);
   }
-
+// кладу весь список вибраних товарів в локал.сховище
   localStorage.setItem(PRODUCT_LS, JSON.stringify(products));
 }
