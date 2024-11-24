@@ -31,24 +31,28 @@ const clockface = document.querySelector(".clockface");
 /**
  *  створили конструктор де ми створили властивість,
  * яка буде перевіряти, чи запущений чи ні таймер
+ * прописали функції: старту, стоп + очищення, показ таймера
  */
 class Timer {
+  //          об'єкт
   constructor({ onTick }) {
     this.isActive = false;
-    this.onTick = onTick;
+    //створили властивість де зберінається посилання на функцію updateClockfase
+    this.onTick = onTick; //
     this.intervalId = null;
 
-    this.init();
+    this.init(); // запускаємо в конструкторі, щоб його було постіно видно
   }
-
+  //це об'єкт з "00", щоб він постійно був на екрані
   init() {
     const time = this.getTimeComponents(0);
     this.onTick(time);
   }
-
+  //зупиняємо і очищаємо форму
   stop() {
     clearInterval(this.intervalId);
     this.isActive = false;
+    //!!! якщо прибрати нижні дві строки, то таймер зупиниться, але не обнулиться
     const time = this.getTimeComponents(0);
     this.onTick(time);
   }
@@ -69,13 +73,12 @@ class Timer {
       const currentTime = Date.now();
       const deltaTime = currentTime - startTime;
       // через this викликається функція, що є не в локальній видимості
-      const time = this.getTimeComponents(deltaTime);
+      const time = this.getTimeComponents(deltaTime); //функ. у мілісекундах, хвилинах і годинах
 
       this.onTick(time);
     }, 1000);
   }
-  //
-  //
+
   //
   //ця конструкція вже є в бібліотеках, а це її розбір: що з а чим і як
   getTimeComponents(time) {
@@ -91,77 +94,82 @@ class Timer {
     //    короткий  синтаксис
     return { hours, mins, secs };
   }
-
+  //функція pad() отримує у value числа з функціїї getTimeComponents(time)
   pad(value) {
-    return String(value).padStart(2, "0");
+    //отримали число перевели до рядка і зробили його двоїчним
+    return String(value).padStart(2, "0"); // властивість padStart додає кількість нулів
   }
 }
 
-//
+//передали функцію в новостворений екземпляр классу!
 const timer = new Timer({
+  //у властивості onTick лежить посилання на updateClockfase
   onTick: updateClockfase,
 });
 //
 //коли передаємо колбек функцію, то у нас втрачений контекст,
 //тоді її підв'язати методом bind(), яки передає посилання
 startBtn.addEventListener("click", timer.start.bind(timer));
-stopBtn.addEventListener("click", timer.stop.bind(timer));
+stopBtn.addEventListener("click", timer.stop.bind(timer)); //для зупинки таймеру
 
+//записуємо значення
 function updateClockfase({ hours, mins, secs }) {
   clockface.textContent = `${hours}:${mins}:${secs}`;
 }
 
-let isActive = false;
-let intervalId = null;
+// /**=======================================================  */
+// //приклад без створення конструктора екземпляру класса
+// let isActive = false;
+// let intervalId = null;
 
-init();
+// init();
 
-function start() {
-  if (isActive) {
-    return;
-  }
+// function start() {
+//   if (isActive) {
+//     return;
+//   }
 
-  isActive = true;
-  const startTime = Date.now();
+//   isActive = true;
+//   const startTime = Date.now();
 
-  intervalId = setInterval(() => {
-    const currentTime = Date.now();
-    const deltaTime = currentTime - startTime;
-    const time = getTimeComponents(deltaTime);
+//   intervalId = setInterval(() => {
+//     const currentTime = Date.now();
+//     const deltaTime = currentTime - startTime;
+//     const time = getTimeComponents(deltaTime);
 
-    onTick(time);
-  }, 1000);
-}
+//     onTick(time);
+//   }, 1000);
+// }
 
-function getTimeComponents(time) {
-  const hours = pad(
-    Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-  );
-  const mins = pad(Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)));
-  const secs = pad(Math.floor((time % (1000 * 60)) / 1000));
+// function getTimeComponents(time) {
+//   const hours = pad(
+//     Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+//   );
+//   const mins = pad(Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)));
+//   const secs = pad(Math.floor((time % (1000 * 60)) / 1000));
 
-  return { hours, mins, secs };
-}
+//   return { hours, mins, secs };
+// }
 
-function pad(value) {
-  return String(value).padStart(2, "0");
-}
+// function pad(value) {
+//   return String(value).padStart(2, "0");
+// }
 
-function stop() {
-  clearInterval(intervalId);
-  isActive = false;
-  const time = getTimeComponents(0);
-  onTick(time);
-}
+// function stop() {
+//   clearInterval(intervalId);
+//   isActive = false;
+//   const time = getTimeComponents(0); //створює об'єкт де прописані всі нулі
+//   onTick(time);
+// }
+// // такі функції можна викликати до момента її створення!!, якщо буДе СТРІЛОЧНА функція то буде ПОМИЛКА
+// function init() {
+//   const time = getTimeComponents(0);
+//   onTick(time);
+// }
 
-function init() {
-  const time = getTimeComponents(0);
-  onTick(time);
-}
+// function onTick({ hours, mins, secs }) {
+//   clockface.textContent = `${hours}:${mins}:${secs}`;
+// }
 
-function onTick({ hours, mins, secs }) {
-  clockface.textContent = `${hours}:${mins}:${secs}`;
-}
-
-startBtn.addEventListener("click", start);
-stopBtn.addEventListener("click", stop);
+// startBtn.addEventListener("click", start);
+// stopBtn.addEventListener("click", stop);
